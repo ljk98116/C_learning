@@ -19,4 +19,17 @@
 
     void _jx_delog(_I type,...);
 
+    //FILE *fopen(const char * filename,const char * mode)
+    //fopen is not zero <=> open file success
+    #define _OPENFILE(f,name,mode,_label_END) do{\
+        if((f = fopen(name,mode)) == 0){\
+            goto _label_END;\
+        }\
+    } while(0)
+
+    //int fclose(FILE *stream)
+    #define _CLOSEFILE(f) do{\
+        if(f) {fclose(f); f = 0;}\
+    } while(0)
+
 #endif
