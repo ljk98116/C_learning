@@ -1,6 +1,6 @@
 #include <string.h>
 #include "param.h"
-
+#include "jx_types.h"
 #include <setjmp.h>
 #include <stdio.h>
 #include <assert.h>
@@ -29,6 +29,6 @@ int main(int argc,char *argv[]){
         return 0;
     #endif
     # if 1
-    
+    g_chk_paramA(argc,argv);
     #endif
 }
