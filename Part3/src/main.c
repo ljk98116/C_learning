@@ -5,6 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 
+//设置对应的字符集合，输出一个字符串，比如小写字母的集合，"a,b,c,d,..."，以'\0'结尾
 #define setstrset(pstr,chkfunc,zero) do{\
 _I __i,__j;\
 __j = 0;\
@@ -52,7 +53,28 @@ void create_CHARS_TAB(void)
 
     set8TAB(CHARS_TAB,ENUM_CBchars,ENUM_TAB_SET,zero,(_u8*)strsets);
     print8TAB(CHARS_TAB,"CHARS_TAB",16,stdout);
+    int x = _isupper('A');
+    printf("0x%x %d\n",CHARS_TAB['A'],x);
     return;
+}
+
+void create_UTF8_TAB(void)
+{
+    _u8 UTF8_TAB[256];
+    _I i;
+    _I bytes;
+    _u8 *psets;
+    for(i=0;i<256;i++)
+    {
+        UTF8_TAB[i] = 0;
+    }
+    bytes = 1;
+    psets = makevalTAB(0,128);
+    set8TAB(UTF8_TAB,ENUM_UTF8_ASCII,ENUM_TAB_SET,1,psets);
+    set8TAB(UTF8_TAB,ENUM_UTF8_BYTE0,ENUM_TAB_SET,1,psets);
+    setval8TAB(UTF8_TAB,ENUM_UTF8_BYTES,3,bytes,1,psets);
+    psets = makevalTAB(0x80,0xc0 - 0x80);
+    
 }
 #if 0
     init_delog -> Npos_delog -> _jx_delog -> _init_delog 

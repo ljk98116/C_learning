@@ -65,7 +65,7 @@ _getB(pi32,3,_u32) => 0x76543210 >> (3 * 8) | 0xfedcba98 << ((4 - 3) * 8) = 0xdc
 //set bit th bit's val 0
 #define _clr_bit(d,bit) do{d &= (~_BITSET(bit));}while(0)
 //check if n th bit is 1
-#define _chk_bit(d,bit) _get_bit(d,bit)
+#define _chk_bit(d,bit) ((d) & bit)
 
 #define _Lclr(a,n) ( (a) & ( ~(_BITS_MASK(n) ) ) )
 #define _LNclr(a,n) ( (a) & ( _BITS_MASK(n) ) )
@@ -152,5 +152,18 @@ extern const _u8 CHARS_TAB[256];
 #define _isblank(c) _chk_bit(CHARS_TAB[(_u8)(c)],_BcharMASK)
 #define _isspace(c) _chk_bit(CHARS_TAB[(_u8)(c)],_ScharMASK)
 #define _isxdigit(c) _chk_bit(CHARS_TAB[(_u8)(c)],_HcharMASK)
+
+enum{
+    ENUM_UTF8_BYTES = 0,
+    ENUM_UTF8_BYTE0 = 4,
+    ENUM_UTF8_BYTE1,
+    ENUM_UTF8_BYTE2,
+    ENUM_UTF8_BYTE3,
+    ENUM_UTF8_ASCII = 7,
+};
+
+#define UTF8_BYTES_SIZE (ENUM_UTF8_BYTE0 - 1)
+
+_u8 *makevalTAB(_I,_I);
 
 #endif

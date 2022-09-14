@@ -23,6 +23,7 @@
 #ifdef __setTAB
 
 /*
+**@summary 对不同集合进行设置，表示该字符属于哪一个集合，每个集合由8位中的一位表示是否属于
 **@param ptab 要设置的表
 **@param bit 当前设置的位
 **@param set 设置还是清除
@@ -92,6 +93,32 @@ void __printTAB( __T__ *ptab,_s name,_I width,FILE *f)
 }
 #undef __NAME
 #undef __printTAB
+#endif
+
+#ifdef __setvalTAB
+_I __setvalTAB(__T__ *ptab,_I bit,_I width,_I val,_I _zero,_u8 *psets)
+{
+    _I re = 0;
+    if(bit + width >= _BITS_SIZE(_BSIZE))
+    {
+        goto __func_END;
+    }
+    val &= _BITS_MASK(width);
+    val = _lshf(val,bit);
+    while(psets[0])
+    {
+        ptab[psets[0]] |= val;
+        psets++;
+    }
+    if(_zero)
+    {
+        ptab[0] |= val;
+    }
+    re = 0;
+__func_END:
+    return re;
+}
+#undef __setvalTAB
 #endif
 
 #undef __T__
