@@ -22,7 +22,6 @@ for(__i = 1;__i < 256;__i++){\
 
 void create_CHARS_TAB(void)
 {
-    _u8 CHARS_TAB[256];
     _u8 strsets[256];
     _I zero;
     _I i;
@@ -59,8 +58,7 @@ void create_CHARS_TAB(void)
 }
 
 void create_UTF8_TAB(void)
-{
-    _u8 UTF8_TAB[256];
+{                                                                                                                                                                                                                                                  
     _I i;
     _I bytes;
     _u8 *psets;
@@ -70,11 +68,35 @@ void create_UTF8_TAB(void)
     }
     bytes = 1;
     psets = makevalTAB(0,128);
+    
     set8TAB(UTF8_TAB,ENUM_UTF8_ASCII,ENUM_TAB_SET,1,psets);
     set8TAB(UTF8_TAB,ENUM_UTF8_BYTE0,ENUM_TAB_SET,1,psets);
     setval8TAB(UTF8_TAB,ENUM_UTF8_BYTES,3,bytes,1,psets);
+    
     psets = makevalTAB(0x80,0xc0 - 0x80);
     
+    set8TAB(UTF8_TAB,ENUM_UTF8_BYTE1,ENUM_TAB_SET,0,psets);
+    set8TAB(UTF8_TAB,ENUM_UTF8_BYTE2,ENUM_TAB_SET,0,psets);
+    set8TAB(UTF8_TAB,ENUM_UTF8_BYTE3,ENUM_TAB_SET,0,psets);
+    
+    bytes = 2;
+    psets = makevalTAB(0xc0,0xe0 - 0xc0);
+    set8TAB(UTF8_TAB,ENUM_UTF8_BYTE0,ENUM_TAB_SET,0,psets);
+    setval8TAB(UTF8_TAB,ENUM_UTF8_BYTES,3,bytes,0,psets);
+
+    
+    bytes = 3;
+    psets = makevalTAB(0xe0,0xf0 - 0xe0);
+    set8TAB(UTF8_TAB,ENUM_UTF8_BYTE0,ENUM_TAB_SET,0,psets);
+    setval8TAB(UTF8_TAB,ENUM_UTF8_BYTES,3,bytes,0,psets);
+
+    
+    bytes = 4;
+    psets = makevalTAB(0xf0,0xf8 - 0xf0);
+    set8TAB(UTF8_TAB,ENUM_UTF8_BYTE0,ENUM_TAB_SET,0,psets);
+    setval8TAB(UTF8_TAB,ENUM_UTF8_BYTES,3,bytes,0,psets);
+
+    print8TAB(UTF8_TAB,"UTF8_TAB",16,stdout);
 }
 #if 0
     init_delog -> Npos_delog -> _jx_delog -> _init_delog 
@@ -107,6 +129,8 @@ _main_END:
 
 #ifdef CREATE_CHARSTAB
     create_CHARS_TAB();
+    create_UTF8_TAB();
+    //printf("%d\n",_chkUTF8("U"));
 #endif
     return 0;                                                                                                                                 
 }

@@ -65,7 +65,8 @@ _getB(pi32,3,_u32) => 0x76543210 >> (3 * 8) | 0xfedcba98 << ((4 - 3) * 8) = 0xdc
 //set bit th bit's val 0
 #define _clr_bit(d,bit) do{d &= (~_BITSET(bit));}while(0)
 //check if n th bit is 1
-#define _chk_bit(d,bit) ((d) & bit)
+#define _chk_bit(d,bit) ((d) & _BITSET(bit))
+#define _chk_bit2(d,bit) ((d) & bit)
 
 #define _Lclr(a,n) ( (a) & ( ~(_BITS_MASK(n) ) ) )
 #define _LNclr(a,n) ( (a) & ( _BITS_MASK(n) ) )
@@ -76,10 +77,10 @@ _getB(pi32,3,_u32) => 0x76543210 >> (3 * 8) | 0xfedcba98 << ((4 - 3) * 8) = 0xdc
 #define _BITBIAS(n,bsize) ((n) & _BITS_MASK(bsize))
 
 //some bit ops
-#define _get_bits(p,k,bsize) _get_bit((p)(_BITPOS(k,bsize)),_BITBIAS(k,bsize))
-#define _set_bits(p,k,bsize) _set_bit((p)(_BITPOS(k,bsize)),_BITBIAS(k,bsize))
-#define _clr_bits(p,k,bsize) _clr_bit((p)(_BITPOS(k,bsize)),_BITBIAS(k,bsize))
-#define _chk_bits(p,k,bsize) _chk_bit((p)(_BITPOS(k,bsize)),_BITBIAS(k,bsize))
+#define _get_bits(p,k,bsize) _get_bit((p)[_BITPOS(k,bsize)],_BITBIAS(k,bsize))
+#define _set_bits(p,k,bsize) _set_bit((p)[_BITPOS(k,bsize)],_BITBIAS(k,bsize))
+#define _clr_bits(p,k,bsize) _clr_bit((p)[_BITPOS(k,bsize)],_BITBIAS(k,bsize))
+#define _chk_bits(p,k,bsize) _chk_bit((p)[_BITPOS(k,bsize)],_BITBIAS(k,bsize))
 
 //bits' widths
 #define _8bsize 3
@@ -141,29 +142,52 @@ enum{
     ENUM_TAB_CLR = 0,
     ENUM_TAB_SET
 };
-extern const _u8 CHARS_TAB[256];
 
-#define _islower(c) _chk_bit(CHARS_TAB[(_u8)(c)],_LcharMASK)
-#define _isupper(c) _chk_bit(CHARS_TAB[(_u8)(c)],_UcharMASK)
-#define _isalpha(c) _chk_bit(CHARS_TAB[(_u8)(c)],_AcharMASK)
-#define _isdigit(c) _chk_bit(CHARS_TAB[(_u8)(c)],_NcharMASK)
-#define _isalnum(c) _chk_bit(CHARS_TAB[(_u8)(c)],_ANcharMASK)
-#define _isprint(c) _chk_bit(CHARS_TAB[(_u8)(c)],_PcharMASK)
-#define _isblank(c) _chk_bit(CHARS_TAB[(_u8)(c)],_BcharMASK)
-#define _isspace(c) _chk_bit(CHARS_TAB[(_u8)(c)],_ScharMASK)
-#define _isxdigit(c) _chk_bit(CHARS_TAB[(_u8)(c)],_HcharMASK)
+extern _u8 CHARS_TAB[256];
+extern _u8 UTF8_TAB[256];
+
+#define _islower(c) _chk_bit2(CHARS_TAB[(_u8)(c)],_LcharMASK)
+#define _isupper(c) _chk_bit2(CHARS_TAB[(_u8)(c)],_UcharMASK)
+#define _isalpha(c) _chk_bit2(CHARS_TAB[(_u8)(c)],_AcharMASK)
+#define _isdigit(c) _chk_bit2(CHARS_TAB[(_u8)(c)],_NcharMASK)
+#define _isalnum(c) _chk_bit2(CHARS_TAB[(_u8)(c)],_ANcharMASK)
+#define _isprint(c) _chk_bit2(CHARS_TAB[(_u8)(c)],_PcharMASK)
+#define _isblank(c) _chk_bit2(CHARS_TAB[(_u8)(c)],_BcharMASK)
+#define _isspace(c) _chk_bit2(CHARS_TAB[(_u8)(c)],_ScharMASK)
+#define _isxdigit(c) _chk_bit2(CHARS_TAB[(_u8)(c)],_HcharMASK)
+
 
 enum{
     ENUM_UTF8_BYTES = 0,
-    ENUM_UTF8_BYTE0 = 4,
+    ENUM_UTF8_BYTE0 = 3,
     ENUM_UTF8_BYTE1,
     ENUM_UTF8_BYTE2,
     ENUM_UTF8_BYTE3,
     ENUM_UTF8_ASCII = 7,
 };
 
-#define UTF8_BYTES_SIZE (ENUM_UTF8_BYTE0 - 1)
+#define UTF8_BYTES_SIZE ENUM_UTF8_BYTE0
 
 _u8 *makevalTAB(_I,_I);
+
+//字符值p的第i个字节
+#define _getUTF8_DATA(p,i) *((_u8*)(p) + i)
+#define _UTF8VAL(p,i) UTF8_TAB[_getUTF8_DATA(p,i)]
+#define _UTF8LEN(p) (_UTF8VAL(p,0) & _BITS_MASK(UTF8_BYTES_SIZE))
+#define _UTF8ASCII(p) _chk_bit(_UTF8VAL(p,0),ENUM_UTF8_ASCII)
+#define _UTF8NULL(p) ((_UTF8VAL(p,0) == 0xc0) && (_UTF8VAL(p,1) == 0x80))
+
+_I isUTF_8(_u8 *p);
+
+extern const _u32 _CHKUTF8TAB[];
+
+#define _getUTF8MASK(p) _CHKUTF8TAB[_UTF8LEN(p)]
+#define _getUTF8_32(p) ((_u32)_UTF8VAL(p,1) |\
+_lshf((_u32)_UTF8VAL(p,2),8) |\
+_lshf((_u32)_UTF8VAL(p,3),16)\
+)
+
+#define _chkUTF8MASK(p,mask) ((_getUTF8_32(p) & mask) == mask)
+#define _chkUTF8(p) (_UTF8LEN(p) && _chkUTF8MASK(p,_getUTF8MASK(p)))
 
 #endif
