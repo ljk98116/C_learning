@@ -1,0 +1,9 @@
+
+********** 2022-09-23 16:46:36 ***** 2221(father 159) process run!
+[src/main.c]<main>(147): argc = 1
+[src/main.c]<main>(148): argc = 0x7ffef5d4899c
+[src/main.c]<main>(149): (double)argc = 1.000000
+[src/main.c]<main>(150): argc = 0x1
+[src/main.c]<main>(150): | (pos)
+[src/main.c]<main>(151): argv[1] = "(null)"
+[src/main.c]<main>(152): argv[2][0] = S

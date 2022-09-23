@@ -106,7 +106,8 @@ void create_UTF8_TAB(void)
 #endif
  
 //#define SNPRINTF_TEST 
-#define CREATE_CHARSTAB
+//#define CREATE_CHARSTAB
+#define TEST
 #define BUF_SIZE 40
 
 _i32 main(_i32 argc,_s argv[]){
@@ -132,5 +133,24 @@ _main_END:
     create_UTF8_TAB();
     //printf("%d\n",_chkUTF8("U"));
 #endif
+#ifdef TEST
+    _error(argc < 2,_main_END,"%s need 2 params!",argv[0]);
+    _bug(argc < 3);
+    if(argc < 3)
+    {
+        init_delog(0,0);
+    }
+    else
+    {
+        init_delog(argv[1],argv[2]);
+    }
+    _si(argc);
+    _sp(argc);
+    _sf((double)argc);
+    _sx(argc);_pos();
+    _ss(argv[1]);
+    _sc(argv[2][0]);
+#endif
+_main_END:
     return 0;                                                                                                                                 
 }
